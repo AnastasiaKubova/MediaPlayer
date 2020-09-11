@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/seekbar_manager_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    tools:background="@color/dark_background">
+
+    <ImageView
+        android:id="@+id/image_track_preview"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:contentDescription="@string/track_preview"
+        android:src="@drawable/track_preview" />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/seekbar_track"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/image_track_preview"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="6dp" />
+
+    <TextView
+        android:id="@+id/current_track_minute"
+        style="@style/time_track_play_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/seekbar_track"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="16dp"
+        tools:text="00:00" />
+
+    <TextView
+        android:id="@+id/total_track_minute"
+        style="@style/time_track_play_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/seekbar_track"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        tools:text="00:00" />
+
+</RelativeLayout>

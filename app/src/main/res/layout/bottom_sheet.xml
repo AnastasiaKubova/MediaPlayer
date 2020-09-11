@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet"
+    style="@style/bottom_sheet_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingRight="16dp"
+    android:paddingLeft="16dp"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="90dp"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+    <TextView
+        android:id="@+id/track_name_bottomsheet"
+        style="@style/track_title_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        tools:text="Track name"/>
+
+    <include layout="@layout/separate"/>
+
+    <TextView
+        android:id="@+id/play_next_bottomsheet"
+        style="@style/bottom_sheet_text"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center|left"
+        android:text="@string/play_next" />
+
+    <TextView
+        android:id="@+id/remove_track_bottomsheet"
+        style="@style/bottom_sheet_text"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center|left"
+        android:text="@string/remove" />
+</LinearLayout>

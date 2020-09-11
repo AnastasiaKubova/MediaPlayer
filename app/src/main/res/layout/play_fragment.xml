@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="50dp"
+    android:padding="16dp">
+
+    <include layout="@layout/seekbar_panel" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/manage_play_board"
+        android:layout_below="@+id/seekbar_manager_panel"
+        android:gravity="center"
+        android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title_track"
+        style="@style/title_of_track_on_play_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:lines="1"
+        tools:text="Title of track" />
+
+    <TextView
+        android:id="@+id/group_name"
+        style="@style/name_of_group_on_play_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_track"
+        android:ellipsize="end"
+        android:lines="1"
+        tools:text="Group name" />
+    </LinearLayout>
+
+    <include layout="@layout/manager_track_panel" />
+
+</RelativeLayout>

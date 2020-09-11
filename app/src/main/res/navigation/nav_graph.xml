@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/filePickerFragment"
+    tools:ignore="UnusedNavigation">
+
+    <fragment
+        android:id="@+id/filePickerFragment"
+        android:name="com.example.musicplayer.ui.filepicker.FilePickerFragment"
+        android:label="FilePickerFragment" >
+        <action
+            android:id="@+id/action_filePickerFragment_to_mainActivity"
+            app:destination="@id/mainActivity" />
+        <action
+            android:id="@+id/action_filePickerFragment_to_playListFragment"
+            app:destination="@id/playListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/playFragment"
+        android:name="com.example.musicplayer.ui.play.PlayFragment"
+        android:label="PlayFragment" >
+    </fragment>
+    <fragment
+        android:id="@+id/playListFragment"
+        android:name="com.example.musicplayer.ui.playlist.PlayListFragment"
+        android:label="PlayListFragment" >
+    </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.example.musicplayer.ui.MainActivity"
+        android:label="MainActivity" />
+</navigation>

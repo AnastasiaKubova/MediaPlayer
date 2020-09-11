@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">MusicPlayer</string>
+    <string name="skip_and_next_track">Skip and play next track</string>
+    <string name="track_menu">Track menu</string>
+    <string name="play_or_stop">Play or stop</string>
+    <string name="skip_and_before">Skip and play before track</string>
+    <string name="track_preview">Track preview</string>
+    <string name="current_track">Current track</string>
+    <string name="list_of_tracks">List of tracks</string>
+    <string name="repeat_current_track">Repeat current track</string>
+    <string name="mix_list_of_tracks">Mix list of tracks</string>
+    <string name="default_track_time">00:00</string>
+    <string name="folder_image">Folder image</string>
+    <string name="select_folder">Select folder</string>
+    <string name="play_list">Плейлист</string>
+    <string name="warning">Предупреждение</string>
+    <string name="sure_for_save_folder_question">Вы хотите сохранить выбранную папку?</string>
+    <string name="yes">Да</string>
+    <string name="cancel">Отмена</string>
+    <string name="remove">Удалить</string>
+    <string name="play_next">Играть следующей</string>
+    <string name="unknown">unknown</string>
+    <string name="player">Player</string>
+    <string name="player_is_down">Player is down</string>
+    <string name="local_service_started">local_service_started</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+</resources>

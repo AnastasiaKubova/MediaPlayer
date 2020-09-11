@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/manage_play_board"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:layout_alignParentBottom="true">
+
+    <ImageView
+        android:id="@+id/skip_before"
+        style="@style/big_ripple_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_toStartOf="@+id/play_pause"
+        android:contentDescription="@string/skip_and_before"
+        android:src="@drawable/skip_before" />
+
+    <ImageView
+        android:id="@+id/play_pause"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:contentDescription="@string/play_or_stop"
+        android:src="@drawable/play" />
+
+    <ImageView
+        android:id="@+id/skip_next"
+        style="@style/big_ripple_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_toEndOf="@+id/play_pause"
+        android:contentDescription="@string/skip_and_next_track"
+        android:src="@drawable/skip_next" />
+
+    <ImageView
+        android:id="@+id/track_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:contentDescription="@string/track_menu"
+        android:src="@drawable/menu" />
+</RelativeLayout>
