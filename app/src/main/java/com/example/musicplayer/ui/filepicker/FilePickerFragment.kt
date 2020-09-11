@@ -6,26 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.R
-import com.example.musicplayer.enum.FragmentType
 import com.example.musicplayer.helper.BaseFragment
 import com.example.musicplayer.utility.FilePicker
 import kotlinx.android.synthetic.main.toolbar_filepicker.*
 import java.io.File
 
-class FilePickerFragment : BaseFragment(), FilePickerViewHolder.FileListener,
+class FilePickerFragment : BaseFragment(), FilePickerAdapter.FileListener,
     BaseFragment.DialogInterface {
 
     private lateinit var filepickerRecyclerView: RecyclerView
     private lateinit var filepickerAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewModel: FilePickerViewModel
-
-    companion object {
-        fun newInstance() = FilePickerFragment()
-    }
+    private var navController: NavController? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -36,22 +34,34 @@ class FilePickerFragment : BaseFragment(), FilePickerViewHolder.FileListener,
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(FilePickerViewModel::class.java)
         dialogListener = this
+        navController = findNavController()
+
+        /* Init callbacks. */
         initObservers()
+
+        /* Init data. */
         initList()
+
+        /* Init view. */
         viewModel.updateFileList()
+        showBottomDialog(View.GONE)
     }
 
     override fun onFolderListener(file: File) {
-        viewModel.updateListForSelectFolder(file)
+        if (file.name.equals(FilePicker.DEFAULT_FOLDER)) {
+            viewModel.updateListForParentFolder()
+        } else {
+            viewModel.updateListForSelectFolder(file)
+        }
     }
 
     override fun positiveClickListener() {
         viewModel.saveFolder()
-        listener?.fragmentClose(FragmentType.Play)
+        navController?.navigateUp()
     }
 
     override fun negativeClickListener() {
-        listener?.fragmentClose(FragmentType.Play)
+        navController?.navigateUp()
     }
 
     override fun onDestroy() {
@@ -62,7 +72,7 @@ class FilePickerFragment : BaseFragment(), FilePickerViewHolder.FileListener,
     private fun initList() {
         viewManager = LinearLayoutManager(activity)
         filepickerAdapter = FilePickerAdapter(mutableListOf(), this)
-        filepickerRecyclerView = activity!!.findViewById<RecyclerView>(R.id.files_list_view).apply {
+        filepickerRecyclerView = requireActivity().findViewById<RecyclerView>(R.id.files_list_view).apply {
             layoutManager = viewManager
             adapter = filepickerAdapter
         }
@@ -73,8 +83,8 @@ class FilePickerFragment : BaseFragment(), FilePickerViewHolder.FileListener,
             updateAdapter(list)
         }
         val currentName = Observer<String> { name -> updateToolbar(name) }
-        viewModel.filesList.observe(activity!!, fileList)
-        viewModel.currentFileName.observe(activity!!, currentName)
+        viewModel.filesList.observe(requireActivity(), fileList)
+        viewModel.currentFileName.observe(requireActivity(), currentName)
     }
 
     private fun updateToolbar(title: String) {
@@ -85,11 +95,7 @@ class FilePickerFragment : BaseFragment(), FilePickerViewHolder.FileListener,
                 R.string.yes), getString(R.string.cancel))
         }
         back_filepicker_toolbar.setOnClickListener {
-            if (title.equals(FilePicker.rootFolder)) {
-                listener?.fragmentClose(FragmentType.Playlist)
-            } else {
-                viewModel.updateListForParentFolder()
-            }
+            navController?.navigateUp()
         }
     }
 

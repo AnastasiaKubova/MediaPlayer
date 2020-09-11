@@ -7,16 +7,13 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.example.musicplayer.R
-import com.example.musicplayer.enum.FragmentType
-import com.example.musicplayer.helper.BaseFragment
 import com.example.musicplayer.helper.FragmentListener
 import com.example.musicplayer.model.Track
 import com.example.musicplayer.service.BackgroundPlayerService
 import com.example.musicplayer.service.PlayerServiceConnection
-import com.example.musicplayer.ui.filepicker.FilePickerFragment
-import com.example.musicplayer.ui.play.PlayFragment
-import com.example.musicplayer.ui.playlist.PlayListFragment
 import com.example.musicplayer.utility.FilePicker
 import com.example.musicplayer.utility.Preference
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -24,9 +21,10 @@ import kotlinx.android.synthetic.main.bottom_fragments.*
 
 class MainActivity : AppCompatActivity(), FragmentListener, PlayerServiceConnection.PlayerServiceConnectionListener {
 
-    private var currentFragment: BaseFragment? = null
     private lateinit var dialog: BottomSheetDialog
     private lateinit var dialogView: View
+    private var navHostFragment: NavHostFragment? = null
+    private var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +34,10 @@ class MainActivity : AppCompatActivity(), FragmentListener, PlayerServiceConnect
         dialogView = layoutInflater.inflate(R.layout.bottom_sheet, null)
         dialog = BottomSheetDialog(this)
         dialog.setContentView(dialogView)
+
+        /* Init fragments. */
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment!!.navController
 
         /* Init listeners. */
         refresh_music_list.setOnClickListener { onRefreshClick() }
@@ -62,21 +64,6 @@ class MainActivity : AppCompatActivity(), FragmentListener, PlayerServiceConnect
             PlayerServiceConnection.mConnection.listener = null
             unbindService(PlayerServiceConnection.mConnection)
             PlayerServiceConnection.mConnection.mBound = false
-        }
-    }
-
-    override fun fragmentClose(type: FragmentType) {
-        currentFragment?.listener = null
-        when(type) {
-            FragmentType.FilePicker -> {
-                openFilePickerFragment()
-            }
-            FragmentType.Play -> {
-                openPlayFragment()
-            }
-            FragmentType.Playlist -> {
-                openPlaylistFragment()
-            }
         }
     }
 
@@ -123,37 +110,17 @@ class MainActivity : AppCompatActivity(), FragmentListener, PlayerServiceConnect
     }
 
     private fun openPlayFragment() {
-        if (currentFragment != PlayFragment.newInstance()) {
-            currentFragment = PlayFragment.newInstance()
-            updateFragment()
-        }
-        bottom_menu_panel.visibility = View.VISIBLE
+        navController?.popBackStack()
+        navController?.navigate(R.id.playFragment)
     }
 
     private fun openPlaylistFragment() {
-        if (currentFragment != PlayListFragment.newInstance()) {
-            currentFragment = PlayListFragment.newInstance()
-            updateFragment()
-        }
-        bottom_menu_panel.visibility = View.VISIBLE
+        navController?.popBackStack()
+        navController?.navigate(R.id.playListFragment)
     }
 
     private fun openFilePickerFragment() {
-        if (currentFragment != FilePickerFragment.newInstance()) {
-            currentFragment = FilePickerFragment.newInstance()
-            updateFragment()
-        }
-        bottom_menu_panel.visibility = View.GONE
-    }
-
-    private fun updateFragment() {
-        if (currentFragment == null) {
-            return
-        }
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, currentFragment!!)
-            .commitNow()
-        currentFragment!!.listener = this
+        navController?.navigate(R.id.filePickerFragment)
     }
 
     override fun onServiceConnectedListener() {

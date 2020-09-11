@@ -2,7 +2,9 @@ package com.example.musicplayer.helper
 
 import android.R
 import android.app.AlertDialog
+import android.view.View
 import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.bottom_fragments.*
 
 
 open class BaseFragment : Fragment() {
@@ -31,6 +33,10 @@ open class BaseFragment : Fragment() {
 
         val dialog: AlertDialog = builder.create()
         dialog.show()
+    }
+
+    fun showBottomDialog(visibility: Int) {
+        requireActivity().bottom_menu_panel.visibility = visibility
     }
 
     interface DialogInterface {

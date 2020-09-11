@@ -1,39 +1,20 @@
 package com.example.musicplayer.service
 
-import android.annotation.SuppressLint
 import android.app.*
-import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.media.AudioAttributes
-import android.media.AudioFocusRequest
-import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.support.v4.media.session.MediaSessionCompat
 import android.text.TextUtils
-import androidx.core.app.NotificationCompat
-import com.example.musicplayer.R
 import com.example.musicplayer.model.Track
 import com.example.musicplayer.utility.AudioProvider
 import com.example.musicplayer.utility.Constants
 import com.example.musicplayer.utility.Preference
 import java.net.URI
-import androidx.media.app.NotificationCompat as MediaNotificationCompat
 
-class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListener {
-
-    /* Constants. */
-    private val NOTIFY_ID = 100
-    private val CHANNEL_ID = "player.manager.service.CHANNEL_ID"
-    private val CHANNEL_TEXT = "player.manager.service.CHANNEL_TEXT"
-    private val SESSION_TRACK = "player.manager.service.SESSION_TRACK"
-    private var playButtonRequestCode = 0
-    private var pauseButtonRequestCode = 1
-    private var nextButtonRequestCode = 2
-    private var beforeButtonRequestCode = 3
+class BackgroundPlayerService: Service() {
 
     /* Player variables. */
     private var mediaPlayer: MediaPlayer? = null
@@ -45,12 +26,8 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
     var listTracks: MutableList<Track> = mutableListOf()
 
     /* Service variables. */
-    private var mediaSession: MediaSessionCompat? = null
-    private var notificationManager: NotificationManager? = null
     private val mBinder: IBinder = LocalBinder()
-    private lateinit var notificationBuilder: NotificationCompat.Builder
-    private var isNotificationIsShown: Boolean = false
-    private var notify: Notification? = null
+    private var notificationManager: NotificationPlayerManager? = null
 
     inner class LocalBinder : Binder() {
         val service: BackgroundPlayerService
@@ -60,16 +37,14 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
     override fun onCreate() {
 
         /* Init variables for notification. */
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        mediaSession = MediaSessionCompat(baseContext, SESSION_TRACK)
-        notificationBuilder = NotificationCompat.Builder(baseContext, CHANNEL_ID)
-        notify = buildNotification()
+        notificationManager = NotificationPlayerManager(baseContext)
 
         /* Show notification. */
+        val notify = notificationManager!!.buildNotification()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForeground(NOTIFY_ID, notify)
         } else {
-            notificationManager?.notify(NOTIFY_ID, notify)
+            notificationManager?.showNotification()
         }
 
         /* Init playlist. */
@@ -103,25 +78,7 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
 
     override fun onDestroy() {
         resetData()
-        notificationManager!!.cancel(NOTIFY_ID)
-    }
-
-    override fun onAudioFocusChange(focusChange: Int) {
-        // TODO
-        when (focusChange) {
-            AudioManager.AUDIOFOCUS_GAIN -> {
-
-            }
-            AudioManager.AUDIOFOCUS_LOSS -> {
-
-            }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-
-            }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                // ... pausing or ducking depends on your app
-            }
-        }
+        notificationManager?.clearNotification()
     }
 
     fun setUriContent(path: URI) {
@@ -138,8 +95,7 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
             mediaPlayerCreate()
         }
         mediaPlayer?.start()
-        updateTextNotification()
-        updatePlayActions()
+        notificationManager?.updatePlayNotification(currentTrack!!)
         listeners.forEach {
             it.onTrackPlay(currentTrack!!)
         }
@@ -153,8 +109,7 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
             mediaPlayerCreate()
         }
         mediaPlayer?.pause()
-        updateTextNotification()
-        updatePauseActions()
+        notificationManager?.updatePauseNotification(currentTrack!!)
         listeners.forEach {
             it.onTrackPause(currentTrack!!)
         }
@@ -175,9 +130,15 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
     fun playTrack(track: Track) {
         for (i in 0 until listTracks.size) {
             if (track == listTracks[i]) {
+
+                /* Reset player and data. */
                 resetPlayer()
+
+                /* Update current data. */
                 currentTrack = listTracks[i]
                 currentTrackIndex = i
+
+                /* Start play. */
                 play()
             }
         }
@@ -185,12 +146,19 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
 
     fun next() {
         if (listTracks.size != 0 && currentTrackIndex != listTracks.count() - 1) {
+
+            /* Reset player and data. */
             resetPlayer()
+
+            /* Update current data. */
             currentTrackIndex++
             currentTrack = listTracks[currentTrackIndex]
+
+            /* Start play. */
             play()
-            updateTextNotification()
-            updatePlayActions()
+
+            /* Notify listeners. */
+            notificationManager?.updatePlayNotification(currentTrack!!)
             listeners.forEach {
                 it.onCurrentTrackChangeListener(currentTrack!!, mediaPlayer?.duration)
             }
@@ -199,12 +167,19 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
 
     fun before() {
         if (listTracks.size > 0 && currentTrackIndex != 0) {
+
+            /* Reset player and data. */
             resetPlayer()
+
+            /* Update current data. */
             currentTrackIndex--
             currentTrack = listTracks[currentTrackIndex]
+
+            /* Start play. */
             play()
-            updateTextNotification()
-            updatePlayActions()
+
+            /* Notify listeners. */
+            notificationManager?.updatePlayNotification(currentTrack!!)
             listeners.forEach {
                 it.onCurrentTrackChangeListener(currentTrack!!, mediaPlayer?.duration)
             }
@@ -216,10 +191,20 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
             return
         }
         val isPlayed = isTrackPlay()
+
+        /* Reset player and data. */
         resetData()
+
+        /* Mix playlist. */
         listTracks.shuffle()
+
+        /* Update current state. */
         currentTrack = listTracks[currentTrackIndex]
+
+        /* Init player. */
         mediaPlayerCreate()
+
+        /* Notify listeners. */
         listeners.forEach {
             it.onPlaylistChangeListener(listTracks)
             it.onCurrentTrackChangeListener(currentTrack!!, mediaPlayer?.duration)
@@ -239,120 +224,6 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
 
     fun playTrackAsNext(track: Track) {
         playNextTrack = track
-    }
-
-    /************* Start methods. ***************/
-    private fun buildNotification(): Notification {
-        notificationBuilder
-
-            // Show controls on lock screen even when user hides sensitive content.
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setOngoing(true)
-
-            // Apply the media style template
-            .setStyle(
-                MediaNotificationCompat.MediaStyle()
-                    .setShowCancelButton(true)
-                    .setShowActionsInCompactView(1)
-                    .setMediaSession(mediaSession?.sessionToken)
-            )
-            .color = baseContext.resources.getColor(R.color.colorPrimary)
-
-        /* Init buttons on notification. */
-        updateTextNotification()
-        updatePauseActions()
-
-        /* Init notification channel. */
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelId = CHANNEL_ID
-            val channel =
-                NotificationChannel(channelId, CHANNEL_TEXT, NotificationManager.IMPORTANCE_LOW)
-            notificationManager?.createNotificationChannel(channel)
-            notificationBuilder.setChannelId(channelId)
-        }
-        isNotificationIsShown = true
-        return notificationBuilder.build()
-    }
-
-    private fun updateTextNotification() {
-        val track = currentTrack ?: return
-        notificationBuilder
-            .setContentTitle(track.title)
-            .setContentText(track.singer)
-            .setLargeIcon(track.image)
-
-        /* Show notification. */
-        if (!isNotificationIsShown) {
-            return
-        }
-        notificationManager?.notify(NOTIFY_ID, notificationBuilder.build())
-    }
-
-    @SuppressLint("RestrictedApi")
-    private fun updatePlayActions() {
-        notificationBuilder.mActions.clear()
-        notificationBuilder.addAction(getBeforeButtonAction())
-        notificationBuilder.addAction(getPauseButtonAction())
-        notificationBuilder.addAction(getNextButtonAction())
-
-        /* Show notification. */
-        if (!isNotificationIsShown) {
-            return
-        }
-        notificationManager?.notify(NOTIFY_ID, notificationBuilder.build())
-    }
-
-    @SuppressLint("RestrictedApi")
-    private fun updatePauseActions() {
-        notificationBuilder.mActions.clear()
-        notificationBuilder.addAction(getBeforeButtonAction())
-        notificationBuilder.addAction(getPlayButtonAction())
-        notificationBuilder.addAction(getNextButtonAction())
-
-        /* Show notification. */
-        if (!isNotificationIsShown) {
-            return
-        }
-        notificationManager?.notify(NOTIFY_ID, notificationBuilder.build())
-    }
-
-    private fun getNextButtonAction(): NotificationCompat.Action {
-        val intentNext = Intent(baseContext, BackgroundPlayerService::class.java)
-        intentNext.putExtra(
-            Constants.NOTIFICATION_INTENT,
-            Constants.NOTIFICATION_PLAYER_NEXT_INTENT
-        )
-        val nextPendingIntent =
-            PendingIntent.getService(baseContext, nextButtonRequestCode, intentNext, PendingIntent.FLAG_UPDATE_CURRENT)
-        return NotificationCompat.Action(R.drawable.next_notity,getString(R.string.next),nextPendingIntent)
-    }
-
-    private fun getBeforeButtonAction():NotificationCompat.Action {
-        val intentBefore = Intent(baseContext, BackgroundPlayerService::class.java)
-        intentBefore.putExtra(
-            Constants.NOTIFICATION_INTENT,
-            Constants.NOTIFICATION_PLAYER_BEFORE_INTENT
-        )
-        val beforePendingIntent
-                = PendingIntent.getService(baseContext, beforeButtonRequestCode, intentBefore, PendingIntent.FLAG_UPDATE_CURRENT)
-        return NotificationCompat.Action(R.drawable.before_notity,getString(R.string.previous), beforePendingIntent)
-    }
-
-    private fun getPauseButtonAction(): NotificationCompat.Action {
-        val intentPause = Intent(baseContext, BackgroundPlayerService::class.java)
-        intentPause.putExtra(Constants.NOTIFICATION_INTENT, Constants.NOTIFICATION_PAUSE_INTENT)
-        val pausePendingIntent =
-            PendingIntent.getService(baseContext, pauseButtonRequestCode, intentPause, PendingIntent.FLAG_UPDATE_CURRENT)
-        return NotificationCompat.Action(R.drawable.pause_notity, getString(R.string.pause), pausePendingIntent)
-    }
-
-    private fun getPlayButtonAction(): NotificationCompat.Action {
-        val intentPlay = Intent(baseContext, BackgroundPlayerService::class.java)
-        intentPlay.putExtra(Constants.NOTIFICATION_INTENT, Constants.NOTIFICATION_PLAY_INTENT)
-        val playPendingIntent =
-            PendingIntent.getService(baseContext, playButtonRequestCode, intentPlay, PendingIntent.FLAG_UPDATE_CURRENT)
-        return NotificationCompat.Action(R.drawable.play_notity, getString(R.string.play), playPendingIntent)
     }
 
     private fun resetPlayer() {
@@ -384,13 +255,17 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
             mediaPlayer?.setOnCompletionListener {
                 listeners.forEach{
                     it.onPlayCompletion()
-                    if (playNextTrack != null) {
-                        playTrack(playNextTrack!!)
-                        playNextTrack = null
-                    } else if (isTrackLooping()) {
-                        play()
-                    } else {
-                        next()
+                    when {
+                        playNextTrack != null -> {
+                            playTrack(playNextTrack!!)
+                            playNextTrack = null
+                        }
+                        isTrackLooping() -> {
+                            play()
+                        }
+                        else -> {
+                            next()
+                        }
                     }
                 }
             }
@@ -400,12 +275,19 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
 
     private fun initPlayerList() {
         if (baseContext != null && sourceFolder != null) {
+
+            /* Reset player and data. */
             resetData()
+
+            /* Init playlist. */
             listTracks = AudioProvider.instance.getPlayList(baseContext!!, sourceFolder!!)
             if (listTracks.size > 0) {
+
+                /* Update current data. */
                 currentTrack = listTracks[currentTrackIndex]
-                updateTextNotification()
-                updatePauseActions()
+
+                /* Notify listeners. */
+                notificationManager?.updatePauseNotification(currentTrack!!)
                 listeners.forEach {
                     it.onCurrentTrackChangeListener(currentTrack!!, mediaPlayer?.duration)
                 }

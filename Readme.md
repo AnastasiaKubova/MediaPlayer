@@ -17,7 +17,8 @@
 - Set track for next playing.
 
 **Design patterns:**
-- MVVM pattern
+- MVVM pattern.
+- Navigation component.
 
 **Main components and libraries:**
 - MediaPlayer;

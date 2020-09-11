@@ -11,11 +11,8 @@
         android:name="com.example.musicplayer.ui.filepicker.FilePickerFragment"
         android:label="FilePickerFragment" >
         <action
-            android:id="@+id/action_filePickerFragment_to_mainActivity"
-            app:destination="@id/mainActivity" />
-        <action
-            android:id="@+id/action_filePickerFragment_to_playListFragment"
-            app:destination="@id/playListFragment" />
+            android:id="@+id/action_filePickerFragment_to_playFragment"
+            app:destination="@id/playFragment" />
     </fragment>
     <fragment
         android:id="@+id/playFragment"
@@ -26,9 +23,8 @@
         android:id="@+id/playListFragment"
         android:name="com.example.musicplayer.ui.playlist.PlayListFragment"
         android:label="PlayListFragment" >
+        <action
+            android:id="@+id/action_playListFragment_to_filePickerFragment"
+            app:destination="@id/filePickerFragment" />
     </fragment>
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="com.example.musicplayer.ui.MainActivity"
-        android:label="MainActivity" />
 </navigation>

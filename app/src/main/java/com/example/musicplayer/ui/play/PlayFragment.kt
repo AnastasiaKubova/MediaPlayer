@@ -24,10 +24,6 @@ class PlayFragment: BaseFragment() {
     private val seekHandler: Handler = Handler(Looper.getMainLooper())
     private lateinit var runnable: Runnable
 
-    companion object {
-        fun newInstance() = PlayFragment()
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.play_fragment, container, false)
@@ -62,8 +58,8 @@ class PlayFragment: BaseFragment() {
         viewModel.attachListener()
 
         /* Set info. */
-        Log.d("TEST_LOG_TAG", "updateCurrentTrack")
         viewModel.updateCurrentTrack()
+        showBottomDialog(View.VISIBLE)
     }
 
     override fun onDestroy() {

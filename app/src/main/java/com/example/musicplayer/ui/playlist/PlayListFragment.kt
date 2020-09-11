@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.R
-import com.example.musicplayer.enum.FragmentType
 import com.example.musicplayer.helper.BaseFragment
 import com.example.musicplayer.model.Track
 import kotlinx.android.synthetic.main.toolbar_playlist.*
@@ -19,11 +20,7 @@ class PlayListFragment: BaseFragment(), PlayListViewHolder.TrackListener {
     private lateinit var playlistRecyclerView: RecyclerView
     private lateinit var playListAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
-
-    companion object {
-        fun newInstance() = PlayListFragment()
-    }
-
+    private var navController: NavController? = null
     private lateinit var viewModel: PlayListViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -34,6 +31,9 @@ class PlayListFragment: BaseFragment(), PlayListViewHolder.TrackListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(PlayListViewModel::class.java)
+
+        /* Init navigate. */
+        navController = findNavController()
 
         /* Init toolbar. */
         initToolbar()
@@ -47,7 +47,7 @@ class PlayListFragment: BaseFragment(), PlayListViewHolder.TrackListener {
 
         /* Set info. */
         viewModel.updatePlaylist()
-
+        showBottomDialog(View.VISIBLE)
     }
 
     override fun onTrackClickListener(track: Track) {
@@ -66,7 +66,7 @@ class PlayListFragment: BaseFragment(), PlayListViewHolder.TrackListener {
     private fun initToolbar() {
         title_playlist_toolbar.text = activity?.resources?.getString(R.string.play_list)
         file_playlist_toolbar.setOnClickListener {
-            listener?.fragmentClose(FragmentType.FilePicker)
+            navController?.navigate(R.id.filePickerFragment)
         }
     }
 
@@ -77,13 +77,13 @@ class PlayListFragment: BaseFragment(), PlayListViewHolder.TrackListener {
             }
             updateAdapter(list)
         }
-        viewModel.playlist.observe(activity!!, playlist)
+        viewModel.playlist.observe(requireActivity(), playlist)
     }
 
     private fun initAdapter() {
         viewManager = LinearLayoutManager(activity)
         playListAdapter = PlayListAdapter(mutableListOf(), this)
-        playlistRecyclerView = activity!!.findViewById<RecyclerView>(R.id.playlist_view).apply {
+        playlistRecyclerView = requireActivity().findViewById<RecyclerView>(R.id.playlist_view).apply {
             layoutManager = viewManager
             adapter = playListAdapter
         }

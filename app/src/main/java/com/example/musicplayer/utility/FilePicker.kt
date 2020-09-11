@@ -12,6 +12,8 @@ class FilePicker private constructor(){
     var currentFolderPath: URI = Environment.getRootDirectory().toURI()
         private set
 
+    private val defaultFolder: File = File("DEFAULT_FOLDER")
+
     init {
         val url = Preference.instance.getSourceFolder()
         if (!TextUtils.isEmpty(url)) {
@@ -22,6 +24,7 @@ class FilePicker private constructor(){
     companion object {
         val instance = FilePicker()
         val rootFolder = "system"
+        val DEFAULT_FOLDER = "DEFAULT_FOLDER"
     }
 
     fun getFileName(): String {
@@ -55,7 +58,11 @@ class FilePicker private constructor(){
 
     private fun getFilesFromDirectory(uri: URI): MutableList<File> {
         val directory = File(uri.path)
+        val fullFileList: MutableList<File> = mutableListOf()
         var files: Array<File> = arrayOf()
+        if (!directory.name.equals(rootFolder)) {
+            fullFileList.add(defaultFolder)
+        }
         if (directory.list() != null) {
             files = directory.listFiles() { file ->
                 file != null && (file.isDirectory || (file.extension != null && audioExtension.contains(
@@ -63,6 +70,7 @@ class FilePicker private constructor(){
                 )))
             }
         }
-        return files.toMutableList()
+        fullFileList.addAll(files.toMutableList())
+        return fullFileList
     }
 }
