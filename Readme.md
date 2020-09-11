@@ -16,7 +16,7 @@
 - Select a track for playing;
 - Set track for next playing.
 
-**Design patterns: **
+**Design patterns:**
 - MVVM pattern
 
 **Main components and libraries:**
