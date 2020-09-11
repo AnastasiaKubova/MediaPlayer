@@ -102,10 +102,10 @@ class PlayFragment: BaseFragment() {
             current_track_minute?.text =
                 TimeConverter.milliSecondsToTimer(seekbar_track.max - seekbar_track.max - pos)
         }
-        viewModel.trackPosition.observe(activity!!, positionTrack)
-        viewModel.durationTrack.observe(activity!!, durationTrack)
-        viewModel.playTrackStatus.observe(activity!!, playTrack)
-        viewModel.currentTrack.observe(activity!!, currentTrack)
+        viewModel.trackPosition.observe(requireActivity(), positionTrack)
+        viewModel.durationTrack.observe(requireActivity(), durationTrack)
+        viewModel.playTrackStatus.observe(requireActivity(), playTrack)
+        viewModel.currentTrack.observe(requireActivity(), currentTrack)
     }
 
     private fun onPlayOrPauseClick() {

@@ -9,8 +9,10 @@ import kotlinx.android.synthetic.main.bottom_fragments.*
 
 open class BaseFragment : Fragment() {
 
-    var listener: FragmentListener? = null
-    var dialogListener: DialogInterface? = null
+    companion object {
+        var listener: FragmentListener? = null
+        var dialogListener: DialogInterface? = null
+    }
 
     fun showDialog(title: String, message: String, positive: String, negative: String) {
         val builder: AlertDialog.Builder = AlertDialog.Builder(activity)

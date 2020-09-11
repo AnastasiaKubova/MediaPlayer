@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.musicplayer.R
+import com.example.musicplayer.helper.BaseFragment
 import com.example.musicplayer.helper.FragmentListener
 import com.example.musicplayer.model.Track
 import com.example.musicplayer.service.BackgroundPlayerService
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity(), FragmentListener, PlayerServiceConnect
         repeat_track.setOnClickListener { onRepeatClick() }
         current_track_view.setOnClickListener { openPlayFragment() }
         music_list_view.setOnClickListener { openPlaylistFragment() }
+        BaseFragment.listener = this
     }
 
     override fun onStart() {
