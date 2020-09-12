@@ -16,9 +16,7 @@
 - Select a track for playing;
 - Set track for next playing.
 
-<img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/bg.gif?raw=true" width="250" />
-<img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/filepicker.gif?raw=true" width="250"/>
-<img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/playlist.gif?raw=true" width="250">
+<img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/bg.gif?raw=true" width="250" /> <img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/filepicker.gif?raw=true" width="250"/> <img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/playlist.gif?raw=true" width="250">
 
 **Design patterns:**
 - MVVM pattern.
