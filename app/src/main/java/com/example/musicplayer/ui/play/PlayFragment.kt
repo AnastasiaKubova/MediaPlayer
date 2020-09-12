@@ -14,11 +14,12 @@ import com.example.musicplayer.R
 import com.example.musicplayer.helper.BaseFragment
 import com.example.musicplayer.utility.TimeConverter
 import com.example.musicplayer.model.Track
+import com.example.musicplayer.service.PlayerServiceConnection
 import kotlinx.android.synthetic.main.manager_track_panel.*
 import kotlinx.android.synthetic.main.play_fragment.*
 import kotlinx.android.synthetic.main.seekbar_panel.*
 
-class PlayFragment: BaseFragment() {
+class PlayFragment: BaseFragment(), PlayerServiceConnection.PlayerServiceConnectionListener {
 
     private lateinit var viewModel: PlayViewModel
     private val seekHandler: Handler = Handler(Looper.getMainLooper())
@@ -41,30 +42,38 @@ class PlayFragment: BaseFragment() {
 
         /* Init data for seek bar. */
         runnable = Runnable { updateSeekBar() }
-
         seekbar_track.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekbar: SeekBar?, p1: Int, p2: Boolean) {
             }
 
-            override fun onStartTrackingTouch(p0: SeekBar?) {
+            override fun onStartTrackingTouch(seek: SeekBar?) {
             }
 
-            override fun onStopTrackingTouch(p0: SeekBar?) {
+            override fun onStopTrackingTouch(seek: SeekBar?) {
+                if (seek != null) {
+                    viewModel.setSeekPosition(seek.progress)
+                }
             }
         })
 
         /* Init listeners and observers*/
         initObservers()
-        viewModel.attachListener()
 
         /* Set info. */
         viewModel.updateCurrentTrack()
         showBottomDialog(View.VISIBLE)
     }
 
+    override fun onStart() {
+        super.onStart()
+        viewModel.attachListener()
+        PlayerServiceConnection.mConnection.listener  = this
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         viewModel.detachListener()
+        PlayerServiceConnection.mConnection.listener = null
     }
 
     private fun updateSeekBar() {
@@ -130,5 +139,14 @@ class PlayFragment: BaseFragment() {
         }
         title_track.text = track.title
         group_name.text = track.singer
+    }
+
+    override fun onServiceConnectedListener() {
+        viewModel.attachListener()
+        viewModel.updateCurrentTrack()
+    }
+
+    override fun onServiceDisconnectedListener() {
+        viewModel.detachListener()
     }
 }

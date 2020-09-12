@@ -30,13 +30,5 @@
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
-
-        <service android:name=".mediaservice.MediaServicePlayback">
-            <intent-filter>
-                <action android:name="android.media.browse.MediaBrowserService" />
-            </intent-filter>
-        </service>
-
-        <receiver android:name=".service.BecomingNoisyReceiver"/>
     </application>
 </manifest>

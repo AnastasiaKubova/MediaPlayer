@@ -6,12 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.support.v4.media.session.MediaSessionCompat
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.example.musicplayer.R
 import com.example.musicplayer.model.Track
 import com.example.musicplayer.utility.Constants
 
-public const val NOTIFY_ID = 100
+const val NOTIFY_ID = 100
 
 class NotificationPlayerManager(var baseContext: Context) {
 
@@ -24,7 +25,7 @@ class NotificationPlayerManager(var baseContext: Context) {
     private var nextButtonRequestCode = 2
     private var beforeButtonRequestCode = 3
 
-    private lateinit var notificationBuilder: NotificationCompat.Builder
+    private var notificationBuilder: NotificationCompat.Builder
     private var notificationManager: NotificationManager? = null
     private var mediaSession: MediaSessionCompat? = null
     private var isNotificationIsShown: Boolean = false
@@ -47,12 +48,10 @@ class NotificationPlayerManager(var baseContext: Context) {
             // Show controls on lock screen even when user hides sensitive content.
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setOngoing(true)
 
             // Apply the media style template
             .setStyle(
                 androidx.media.app.NotificationCompat.MediaStyle()
-                    .setShowCancelButton(true)
                     .setShowActionsInCompactView(1)
                     .setMediaSession(mediaSession?.sessionToken)
             )
@@ -106,6 +105,7 @@ class NotificationPlayerManager(var baseContext: Context) {
         notificationBuilder.addAction(getBeforeButtonAction())
         notificationBuilder.addAction(getPauseButtonAction())
         notificationBuilder.addAction(getNextButtonAction())
+        notificationBuilder.setOngoing(true)
 
         /* Show notification. */
         if (!isNotificationIsShown) {
@@ -120,6 +120,7 @@ class NotificationPlayerManager(var baseContext: Context) {
         notificationBuilder.addAction(getBeforeButtonAction())
         notificationBuilder.addAction(getPlayButtonAction())
         notificationBuilder.addAction(getNextButtonAction())
+        notificationBuilder.setOngoing(false)
 
         /* Show notification. */
         if (!isNotificationIsShown) {
@@ -127,7 +128,6 @@ class NotificationPlayerManager(var baseContext: Context) {
         }
         notificationManager?.notify(NOTIFY_ID, notificationBuilder.build())
     }
-
 
     private fun getNextButtonAction(): NotificationCompat.Action {
         val intentNext = Intent(baseContext, BackgroundPlayerService::class.java)

@@ -3,9 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/filePickerFragment"
+    app:startDestination="@id/playFragment"
     tools:ignore="UnusedNavigation">
-
     <fragment
         android:id="@+id/filePickerFragment"
         android:name="com.example.musicplayer.ui.filepicker.FilePickerFragment"

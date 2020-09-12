@@ -95,6 +95,9 @@ class BackgroundPlayerService: Service() {
             mediaPlayerCreate()
         }
         mediaPlayer?.start()
+
+        /* Start notification and update data. */
+        startForeground(NOTIFY_ID, notificationManager!!.buildNotification())
         notificationManager?.updatePlayNotification(currentTrack!!)
         listeners.forEach {
             it.onTrackPlay(currentTrack!!)
@@ -109,6 +112,9 @@ class BackgroundPlayerService: Service() {
             mediaPlayerCreate()
         }
         mediaPlayer?.pause()
+
+        /* Stop notification and update data. */
+        stopForeground(false)
         notificationManager?.updatePauseNotification(currentTrack!!)
         listeners.forEach {
             it.onTrackPause(currentTrack!!)
@@ -212,6 +218,10 @@ class BackgroundPlayerService: Service() {
                 play()
             }
         }
+    }
+
+    fun setSeekPosition(pos: Int) {
+        mediaPlayer?.seekTo(pos)
     }
 
     fun getCurrentPosition(): Int {

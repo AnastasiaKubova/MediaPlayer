@@ -54,6 +54,11 @@ class PlayViewModel : ViewModel(), BackgroundPlayerService.PlayerListener {
         trackPosition.value = PlayerServiceConnection.mConnection.mService?.getCurrentPosition()
     }
 
+    fun setSeekPosition(pos: Int) {
+        PlayerServiceConnection.mConnection.mService?.setSeekPosition(pos)
+        updateCurrentTrack()
+    }
+
     fun attachListener() {
         PlayerServiceConnection.mConnection.mService?.listeners?.add(this)
     }

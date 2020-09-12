@@ -3,15 +3,15 @@ package com.example.musicplayer.ui.filepicker
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.musicplayer.service.PlayerServiceConnection
+import com.example.musicplayer.ui.filepicker.model.FileData
 import com.example.musicplayer.utility.FilePicker
 import com.example.musicplayer.utility.Preference
-import java.io.File
 import java.net.URI
 
 class FilePickerViewModel: ViewModel() {
 
-    val filesList: MutableLiveData<MutableList<File>> by lazy {
-        MutableLiveData<MutableList<File>>()
+    val filesList: MutableLiveData<MutableList<FileData>> by lazy {
+        MutableLiveData<MutableList<FileData>>()
     }
 
     val currentFileName: MutableLiveData<String> by lazy { MutableLiveData<String>() }
@@ -31,8 +31,8 @@ class FilePickerViewModel: ViewModel() {
         updateCurrentFolderName()
     }
 
-    fun updateListForSelectFolder(file: File) {
-        filesList.value = FilePicker.instance.getFromSelectFolderList(URI.create(file.absolutePath))
+    fun updateListForSelectFolder(file: FileData) {
+        filesList.value = FilePicker.instance.getFromSelectFolderList(URI.create(file.file!!.absolutePath))
         updateCurrentFolderName()
     }
 

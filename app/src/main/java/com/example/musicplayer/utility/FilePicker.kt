@@ -3,6 +3,8 @@ package com.example.musicplayer.utility
 import android.net.Uri
 import android.os.Environment
 import android.text.TextUtils
+import com.example.musicplayer.enum.FileType
+import com.example.musicplayer.ui.filepicker.model.FileData
 import com.example.musicplayer.utility.Constants.audioExtension
 import java.io.File
 import java.net.URI
@@ -24,23 +26,22 @@ class FilePicker private constructor(){
     companion object {
         val instance = FilePicker()
         val rootFolder = "system"
-        val DEFAULT_FOLDER = "DEFAULT_FOLDER"
     }
 
     fun getFileName(): String {
         return File(currentFolderPath.path).name
     }
 
-    fun getLastFolderList(): MutableList<File> {
+    fun getLastFolderList(): MutableList<FileData> {
         return getFilesFromDirectory(currentFolderPath)
     }
 
-    fun getFromSelectFolderList(path: URI): MutableList<File> {
+    fun getFromSelectFolderList(path: URI): MutableList<FileData> {
         currentFolderPath = path
         return getFilesFromDirectory(currentFolderPath)
     }
 
-    fun getParentFiles(): MutableList<File> {
+    fun getParentFiles(): MutableList<FileData> {
         if (currentFolderPath.path.trim('/').equals(rootFolder)) {
             return getFilesFromDirectory(currentFolderPath)
         }
@@ -56,12 +57,17 @@ class FilePicker private constructor(){
         }
     }
 
-    private fun getFilesFromDirectory(uri: URI): MutableList<File> {
+    private fun getFilesFromDirectory(uri: URI): MutableList<FileData> {
         val directory = File(uri.path)
-        val fullFileList: MutableList<File> = mutableListOf()
+        val fullFileList: MutableList<FileData> = mutableListOf()
         var files: Array<File> = arrayOf()
         if (!directory.name.equals(rootFolder)) {
-            fullFileList.add(defaultFolder)
+            fullFileList.add(
+                FileData(
+                    FileType.None,
+                    null
+                )
+            )
         }
         if (directory.list() != null) {
             files = directory.listFiles() { file ->
@@ -70,7 +76,12 @@ class FilePicker private constructor(){
                 )))
             }
         }
-        fullFileList.addAll(files.toMutableList())
+        fullFileList.addAll(files.map { file ->
+            FileData(
+                FileType.File,
+                file
+            )
+        })
         return fullFileList
     }
 }

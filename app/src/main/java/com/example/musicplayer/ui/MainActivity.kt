@@ -20,7 +20,7 @@ import com.example.musicplayer.utility.Preference
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.android.synthetic.main.bottom_fragments.*
 
-class MainActivity : AppCompatActivity(), FragmentListener, PlayerServiceConnection.PlayerServiceConnectionListener {
+class MainActivity : AppCompatActivity(), FragmentListener {
 
     private lateinit var dialog: BottomSheetDialog
     private lateinit var dialogView: View
@@ -45,12 +45,15 @@ class MainActivity : AppCompatActivity(), FragmentListener, PlayerServiceConnect
         repeat_track.setOnClickListener { onRepeatClick() }
         current_track_view.setOnClickListener { openPlayFragment() }
         music_list_view.setOnClickListener { openPlaylistFragment() }
-        BaseFragment.listener = this
     }
 
     override fun onStart() {
         super.onStart()
-        PlayerServiceConnection.mConnection.listener = this
+
+        /* Init listeners. */
+        BaseFragment.listener = this
+
+        /* Start service. */
         val intent = Intent(this, BackgroundPlayerService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent)
@@ -62,8 +65,12 @@ class MainActivity : AppCompatActivity(), FragmentListener, PlayerServiceConnect
 
     override fun onStop() {
         super.onStop()
+
+        /* Remove listeners. */
+        BaseFragment.listener = null
+
+        /* Disconnect service. */
         if (PlayerServiceConnection.mConnection.mBound) {
-            PlayerServiceConnection.mConnection.listener = null
             unbindService(PlayerServiceConnection.mConnection)
             PlayerServiceConnection.mConnection.mBound = false
         }
@@ -123,12 +130,5 @@ class MainActivity : AppCompatActivity(), FragmentListener, PlayerServiceConnect
 
     private fun openFilePickerFragment() {
         navController?.navigate(R.id.filePickerFragment)
-    }
-
-    override fun onServiceConnectedListener() {
-        showFirstFragment()
-    }
-
-    override fun onServiceDisconnectedListener() {
     }
 }

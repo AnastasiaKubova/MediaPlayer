@@ -11,10 +11,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.R
+import com.example.musicplayer.enum.FileType
 import com.example.musicplayer.helper.BaseFragment
-import com.example.musicplayer.utility.FilePicker
+import com.example.musicplayer.ui.filepicker.model.FileData
 import kotlinx.android.synthetic.main.toolbar_filepicker.*
-import java.io.File
 
 class FilePickerFragment : BaseFragment(), FilePickerAdapter.FileListener,
     BaseFragment.DialogInterface {
@@ -47,8 +47,8 @@ class FilePickerFragment : BaseFragment(), FilePickerAdapter.FileListener,
         showBottomDialog(View.GONE)
     }
 
-    override fun onFolderListener(file: File) {
-        if (file.name.equals(FilePicker.DEFAULT_FOLDER)) {
+    override fun onFolderListener(file: FileData) {
+        if (file.fileType.equals(FileType.None)) {
             viewModel.updateListForParentFolder()
         } else {
             viewModel.updateListForSelectFolder(file)
@@ -79,7 +79,7 @@ class FilePickerFragment : BaseFragment(), FilePickerAdapter.FileListener,
     }
 
     private fun initObservers() {
-        val fileList = Observer<MutableList<File>> { list ->
+        val fileList = Observer<MutableList<FileData>> { list ->
             updateAdapter(list)
         }
         val currentName = Observer<String> { name -> updateToolbar(name) }
@@ -95,11 +95,12 @@ class FilePickerFragment : BaseFragment(), FilePickerAdapter.FileListener,
                 R.string.yes), getString(R.string.cancel))
         }
         back_filepicker_toolbar.setOnClickListener {
-            navController?.navigateUp()
+            navController?.popBackStack()
+            navController?.navigate(R.id.playListFragment)
         }
     }
 
-    private fun updateAdapter(list: MutableList<File>) {
+    private fun updateAdapter(list: MutableList<FileData>) {
         (filepickerAdapter as FilePickerAdapter).filesList = list
         filepickerAdapter.notifyDataSetChanged()
     }

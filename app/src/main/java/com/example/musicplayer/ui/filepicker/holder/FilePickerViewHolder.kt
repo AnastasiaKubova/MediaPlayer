@@ -1,16 +1,18 @@
-package com.example.musicplayer.ui.filepicker
+package com.example.musicplayer.ui.filepicker.holder
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.R
+import com.example.musicplayer.ui.filepicker.model.FileData
+import com.example.musicplayer.ui.filepicker.FilePickerAdapter
 import kotlinx.android.synthetic.main.file_item.view.*
-import java.io.File
 
-class FilePickerViewHolder(itemView: View, var listener: FilePickerAdapter.FileListener?) : RecyclerView.ViewHolder(itemView), BaseHolder {
+class FilePickerViewHolder(itemView: View, var listener: FilePickerAdapter.FileListener?) : RecyclerView.ViewHolder(itemView),
+    BaseHolder {
 
-    override fun bind(file: File) {
-        itemView.file_title.text = file.name
-        if (file.isDirectory) {
+    override fun bind(file: FileData) {
+        itemView.file_title.text = file.file!!.name
+        if (file.file!!.isDirectory) {
             itemView.file_image.setImageDrawable(itemView.context.resources.getDrawable(R.drawable.folder))
             itemView.setOnClickListener { listener?.onFolderListener(file) }
         } else {

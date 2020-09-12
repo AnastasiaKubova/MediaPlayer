@@ -16,6 +16,10 @@
 - Select a track for playing;
 - Set track for next playing.
 
+<img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/bg.gif?raw=true" width="250" />
+<img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/filepicker.gif?raw=true" width="250"/>
+<img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/playlist.gif?raw=true" width="250">
+
 **Design patterns:**
 - MVVM pattern.
 - Navigation component.
@@ -29,5 +33,3 @@
 **Know issues**
 - Some times the player does not switch to the next track if the track less 10 sec.
 - On Android with API less 23 notification with player management is not shown.
-- For now, you cant scroll the song with a seek bar;
-- Probably for now you can't close player notification :D (just kill app).
