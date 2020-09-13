@@ -35,10 +35,6 @@ open class BaseFragment : Fragment() {
         dialog.show()
     }
 
-    fun showBottomDialog(visibility: Int) {
-        requireActivity().bottom_menu_panel.visibility = visibility
-    }
-
     interface DialogInterface {
         fun positiveClickListener()
         fun negativeClickListener()

@@ -6,20 +6,20 @@ import android.os.IBinder
 
 object PlayerServiceConnection : ServiceConnection {
 
-    var listener: PlayerServiceConnectionListener? = null
+    val listener: MutableList<PlayerServiceConnectionListener> = mutableListOf()
     var mService: BackgroundPlayerService? = null
     var mBound = false
 
     override fun onServiceDisconnected(className: ComponentName?) {
         mBound = false
-        listener?.onServiceDisconnectedListener()
+        listener.forEach { it.onServiceDisconnectedListener() }
     }
 
     override fun onServiceConnected(className: ComponentName?, service: IBinder?) {
         val binder = service as (BackgroundPlayerService.LocalBinder)
         mService = binder.service
         mBound = true
-        listener?.onServiceConnectedListener()
+        listener.forEach { it.onServiceConnectedListener() }
     }
 
     interface PlayerServiceConnectionListener {

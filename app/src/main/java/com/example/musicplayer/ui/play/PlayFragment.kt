@@ -60,19 +60,18 @@ class PlayFragment: BaseFragment(), PlayerServiceConnection.PlayerServiceConnect
 
         /* Set info. */
         viewModel.updateCurrentTrack()
-        showBottomDialog(View.VISIBLE)
     }
 
     override fun onStart() {
         super.onStart()
         viewModel.attachListener()
-        PlayerServiceConnection.listener  = this
+        PlayerServiceConnection.listener.add(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         viewModel.detachListener()
-        PlayerServiceConnection.listener = null
+        PlayerServiceConnection.listener.remove(this)
     }
 
     private fun updateSeekBar() {

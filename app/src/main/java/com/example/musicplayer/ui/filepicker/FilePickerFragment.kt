@@ -44,7 +44,6 @@ class FilePickerFragment : BaseFragment(), FilePickerAdapter.FileListener,
 
         /* Init view. */
         viewModel.updateFileList()
-        showBottomDialog(View.GONE)
     }
 
     override fun onFolderListener(file: FileData) {
@@ -57,11 +56,11 @@ class FilePickerFragment : BaseFragment(), FilePickerAdapter.FileListener,
 
     override fun positiveClickListener() {
         viewModel.saveFolder()
-        navController?.navigateUp()
+        openPreviewFragment()
     }
 
     override fun negativeClickListener() {
-        navController?.navigateUp()
+        openPreviewFragment()
     }
 
     override fun onDestroy() {
@@ -95,13 +94,17 @@ class FilePickerFragment : BaseFragment(), FilePickerAdapter.FileListener,
                 R.string.yes), getString(R.string.cancel))
         }
         back_filepicker_toolbar.setOnClickListener {
-            navController?.popBackStack()
-            navController?.navigate(R.id.playListFragment)
+            openPreviewFragment()
         }
     }
 
     private fun updateAdapter(list: MutableList<FileData>) {
         (filepickerAdapter as FilePickerAdapter).filesList = list
         filepickerAdapter.notifyDataSetChanged()
+    }
+
+    private fun openPreviewFragment() {
+        navController?.popBackStack()
+        navController?.navigate(R.id.viewPagerFragment)
     }
 }

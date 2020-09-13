@@ -3,7 +3,6 @@ package com.example.musicplayer.ui
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -14,12 +13,9 @@ import com.example.musicplayer.model.Track
 import com.example.musicplayer.service.BackgroundPlayerService
 import com.example.musicplayer.service.PlayerServiceConnection
 import com.example.musicplayer.helper.FilePicker
-import com.example.musicplayer.helper.Preference
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.android.synthetic.main.bottom_fragments.*
 
-class MainActivity : AppCompatActivity(),
-    FragmentListener {
+class MainActivity : AppCompatActivity(), FragmentListener {
 
     private lateinit var dialog: BottomSheetDialog
     private lateinit var dialogView: View
@@ -38,12 +34,6 @@ class MainActivity : AppCompatActivity(),
         /* Init fragments. */
         navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment!!.navController
-
-        /* Init listeners. */
-        refresh_music_list.setOnClickListener { onRefreshClick() }
-        repeat_track.setOnClickListener { onRepeatClick() }
-        current_track_view.setOnClickListener { openPlayFragment() }
-        music_list_view.setOnClickListener { openPlaylistFragment() }
     }
 
     override fun onStart() {
@@ -89,35 +79,5 @@ class MainActivity : AppCompatActivity(),
             dialog.cancel()
         }
         dialog.show()
-    }
-
-    private fun onRepeatClick() {
-        val isLooper = PlayerServiceConnection.mService?.isTrackLooping()
-        if (isLooper != null) {
-            PlayerServiceConnection.mService?.setLooping(!isLooper)
-            if (!isLooper) {
-                repeat_track.background = getDrawable(R.drawable.bg_selected_small)
-            } else {
-                repeat_track.background = null
-            }
-        }
-    }
-
-    private fun onRefreshClick() {
-        PlayerServiceConnection.mService?.mixPlaylist()
-    }
-
-    private fun openPlayFragment() {
-        navController?.popBackStack()
-        navController?.navigate(R.id.playFragment)
-    }
-
-    private fun openPlaylistFragment() {
-        navController?.popBackStack()
-        navController?.navigate(R.id.playListFragment)
-    }
-
-    private fun openFilePickerFragment() {
-        navController?.navigate(R.id.filePickerFragment)
     }
 }

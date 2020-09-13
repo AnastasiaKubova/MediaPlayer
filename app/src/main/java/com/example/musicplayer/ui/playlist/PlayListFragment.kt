@@ -14,9 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.R
 import com.example.musicplayer.ui.BaseFragment
 import com.example.musicplayer.model.Track
+import com.example.musicplayer.service.PlayerServiceConnection
 import kotlinx.android.synthetic.main.toolbar_playlist.*
 
-class PlayListFragment: BaseFragment(), PlayListViewHolder.TrackListener {
+class PlayListFragment: BaseFragment(), PlayListViewHolder.TrackListener, PlayerServiceConnection.PlayerServiceConnectionListener {
 
     private lateinit var playlistRecyclerView: RecyclerView
     private lateinit var playListAdapter: RecyclerView.Adapter<*>
@@ -48,7 +49,6 @@ class PlayListFragment: BaseFragment(), PlayListViewHolder.TrackListener {
 
         /* Set info. */
         viewModel.updatePlaylist()
-        showBottomDialog(View.VISIBLE)
     }
 
     override fun onTrackClickListener(track: Track) {
@@ -59,9 +59,25 @@ class PlayListFragment: BaseFragment(), PlayListViewHolder.TrackListener {
         listener?.bottomSheetOpenListener(track)
     }
 
+    override fun onServiceConnectedListener() {
+        viewModel.attachListener()
+        viewModel.updatePlaylist()
+    }
+
+    override fun onServiceDisconnectedListener() {
+        viewModel.detachListener()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.attachListener()
+        PlayerServiceConnection.listener.add(this)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         viewModel.detachListener()
+        PlayerServiceConnection.listener.remove(this)
     }
 
     private fun initToolbar() {
