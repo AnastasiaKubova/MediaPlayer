@@ -1,4 +1,4 @@
-package com.example.musicplayer.helper
+package com.example.musicplayer.ui
 
 import com.example.musicplayer.model.Track
 

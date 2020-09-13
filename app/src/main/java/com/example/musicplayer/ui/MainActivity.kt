@@ -10,17 +10,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.musicplayer.R
-import com.example.musicplayer.helper.BaseFragment
-import com.example.musicplayer.helper.FragmentListener
 import com.example.musicplayer.model.Track
 import com.example.musicplayer.service.BackgroundPlayerService
 import com.example.musicplayer.service.PlayerServiceConnection
-import com.example.musicplayer.utility.FilePicker
-import com.example.musicplayer.utility.Preference
+import com.example.musicplayer.helper.FilePicker
+import com.example.musicplayer.helper.Preference
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.android.synthetic.main.bottom_fragments.*
 
-class MainActivity : AppCompatActivity(), FragmentListener {
+class MainActivity : AppCompatActivity(),
+    FragmentListener {
 
     private lateinit var dialog: BottomSheetDialog
     private lateinit var dialogView: View

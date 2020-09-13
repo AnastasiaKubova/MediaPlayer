@@ -1,18 +1,11 @@
-package com.example.musicplayer.utility
+package com.example.musicplayer.helper
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.MediaDescription
 import android.media.MediaMetadataRetriever
-import android.media.browse.MediaBrowser
 import android.net.Uri
-import android.os.Build
-import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_BROWSABLE
-import android.support.v4.media.MediaDescriptionCompat
 import android.text.TextUtils
-import androidx.annotation.RequiresApi
 import com.example.musicplayer.R
 import com.example.musicplayer.model.Track
 import com.example.musicplayer.utility.Constants.audioExtension

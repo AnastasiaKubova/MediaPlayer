@@ -1,8 +1,6 @@
-package com.example.musicplayer.helper
+package com.example.musicplayer.ui
 
-import android.R
 import android.app.AlertDialog
-import android.view.View
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.bottom_fragments.*
 

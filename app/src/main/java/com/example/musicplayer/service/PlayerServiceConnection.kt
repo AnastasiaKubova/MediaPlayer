@@ -3,10 +3,6 @@ package com.example.musicplayer.service
 import android.content.ComponentName
 import android.content.ServiceConnection
 import android.os.IBinder
-import android.text.TextUtils
-import android.util.Log
-import com.example.musicplayer.utility.Preference
-import java.net.URI
 
 class PlayerServiceConnection : ServiceConnection {
 

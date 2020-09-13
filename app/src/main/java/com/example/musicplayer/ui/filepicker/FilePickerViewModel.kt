@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.musicplayer.service.PlayerServiceConnection
 import com.example.musicplayer.ui.filepicker.model.FileData
-import com.example.musicplayer.utility.FilePicker
-import com.example.musicplayer.utility.Preference
+import com.example.musicplayer.helper.FilePicker
+import com.example.musicplayer.helper.Preference
 import java.net.URI
 
 class FilePickerViewModel: ViewModel() {

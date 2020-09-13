@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.R
 import com.example.musicplayer.enum.FileType
-import com.example.musicplayer.helper.BaseFragment
+import com.example.musicplayer.ui.BaseFragment
 import com.example.musicplayer.ui.filepicker.model.FileData
 import kotlinx.android.synthetic.main.toolbar_filepicker.*
 

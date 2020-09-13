@@ -3,7 +3,6 @@ package com.example.musicplayer.ui.play
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,7 @@ import android.widget.SeekBar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.musicplayer.R
-import com.example.musicplayer.helper.BaseFragment
+import com.example.musicplayer.ui.BaseFragment
 import com.example.musicplayer.utility.TimeConverter
 import com.example.musicplayer.model.Track
 import com.example.musicplayer.service.PlayerServiceConnection

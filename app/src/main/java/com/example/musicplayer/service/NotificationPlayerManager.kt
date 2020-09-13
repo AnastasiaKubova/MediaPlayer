@@ -47,7 +47,7 @@ class NotificationPlayerManager(var baseContext: Context) {
 
             // Show controls on lock screen even when user hides sensitive content.
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.mipmap.ic_launcher)
 
             // Apply the media style template
             .setStyle(

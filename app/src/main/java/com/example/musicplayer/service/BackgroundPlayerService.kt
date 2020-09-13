@@ -1,26 +1,31 @@
 package com.example.musicplayer.service
 
-import android.app.*
+import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.text.TextUtils
+import androidx.annotation.RequiresApi
+import com.example.musicplayer.helper.AudioProvider
+import com.example.musicplayer.helper.Preference
 import com.example.musicplayer.model.Track
-import com.example.musicplayer.utility.AudioProvider
 import com.example.musicplayer.utility.Constants
-import com.example.musicplayer.utility.Preference
 import java.net.URI
 
-class BackgroundPlayerService: Service() {
+class BackgroundPlayerService: Service(), MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 
     /* Player variables. */
     private var mediaPlayer: MediaPlayer? = null
     private var currentTrackIndex: Int = 0
     private var sourceFolder: URI? = null
     private var playNextTrack: Track? = null
+    private var isInterrupted: Boolean = true
     var listeners: MutableList<PlayerListener> = mutableListOf()
     var currentTrack: Track? = null
     var listTracks: MutableList<Track> = mutableListOf()
@@ -83,6 +88,8 @@ class BackgroundPlayerService: Service() {
 
     fun setUriContent(path: URI) {
         this.sourceFolder = path
+
+        /* Update playlist and create player. */
         initPlayerList()
         mediaPlayerCreate()
     }
@@ -94,7 +101,15 @@ class BackgroundPlayerService: Service() {
         if (mediaPlayer == null) {
             mediaPlayerCreate()
         }
-        mediaPlayer?.start()
+
+        var canPlay = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            canPlay = initFocus()
+        }
+        if (canPlay) {
+            mediaPlayer?.start()
+        }
+        mediaPlayer?.setOnCompletionListener(this)
 
         /* Start notification and update data. */
         startForeground(NOTIFY_ID, notificationManager!!.buildNotification())
@@ -112,6 +127,7 @@ class BackgroundPlayerService: Service() {
             mediaPlayerCreate()
         }
         mediaPlayer?.pause()
+        mediaPlayer?.setOnCompletionListener(null)
 
         /* Stop notification and update data. */
         stopForeground(false)
@@ -243,10 +259,16 @@ class BackgroundPlayerService: Service() {
     }
 
     private fun resetData() {
+
+        /* Reset player. */
         resetPlayer()
+
+        /* Reset temp data. */
         playNextTrack = null
         currentTrack = null
         currentTrackIndex = 0
+
+        /* Notify listeners. */
         listeners.forEach {
             it.onPlayerReleaseListener()
         }
@@ -254,6 +276,8 @@ class BackgroundPlayerService: Service() {
 
     private fun mediaPlayerCreate() {
         if (baseContext != null && currentTrack != null) {
+
+            /* Create player. */
             mediaPlayer = MediaPlayer()
             mediaPlayer?.setDataSource(baseContext!!, currentTrack?.path!!)
             mediaPlayer?.setAudioAttributes(
@@ -262,23 +286,6 @@ class BackgroundPlayerService: Service() {
                     .setUsage(AudioAttributes.USAGE_MEDIA)
                     .build()
             )
-            mediaPlayer?.setOnCompletionListener {
-                listeners.forEach{
-                    it.onPlayCompletion()
-                    when {
-                        playNextTrack != null -> {
-                            playTrack(playNextTrack!!)
-                            playNextTrack = null
-                        }
-                        isTrackLooping() -> {
-                            play()
-                        }
-                        else -> {
-                            next()
-                        }
-                    }
-                }
-            }
             mediaPlayer?.prepare()
         }
     }
@@ -303,6 +310,70 @@ class BackgroundPlayerService: Service() {
                 }
             }
         }
+    }
+
+
+    override fun onCompletion(p0: MediaPlayer?) {
+
+        /* Notify listeners.*/
+        listeners.forEach{
+            it.onPlayCompletion()
+
+            /* Do action. */
+            when {
+                playNextTrack != null -> {
+                    playTrack(playNextTrack!!)
+                    playNextTrack = null
+                }
+                isTrackLooping() -> {
+                    play()
+                }
+                else -> {
+                    next()
+                }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun initFocus() : Boolean {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
+            setAudioAttributes(AudioAttributes.Builder().run {
+                setUsage(AudioAttributes.USAGE_GAME)
+                setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                build()
+            })
+            setAcceptsDelayedFocusGain(true)
+            setOnAudioFocusChangeListener(this@BackgroundPlayerService)
+            build()
+        }
+        val res = audioManager.requestAudioFocus(focusRequest)
+        return res == AudioManager.AUDIOFOCUS_GAIN
+    }
+
+    override fun onAudioFocusChange(focusChange: Int) {
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                if (isInterrupted) {
+                    isInterrupted = false
+                    play()
+                }
+            }
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                isInterrupted = true
+                pause()
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                isInterrupted = true
+                pause()
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                isInterrupted = true
+                pause()
+            }
+        }
+        notificationManager?.clearNotification()
     }
 
     interface PlayerListener {
