@@ -304,19 +304,19 @@ class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListene
                 /* Notify listeners.*/
                 listeners.forEach{
                     it.onPlayCompletion()
+                }
 
-                    /* Do action. */
-                    when {
-                        playNextTrack != null -> {
-                            playTrack(playNextTrack!!)
-                            playNextTrack = null
-                        }
-                        isTrackLooping() -> {
-                            play()
-                        }
-                        else -> {
-                            next()
-                        }
+                /* Do action. */
+                when {
+                    playNextTrack != null -> {
+                        playTrack(playNextTrack!!)
+                        playNextTrack = null
+                    }
+                    isTrackLooping() -> {
+                        play()
+                    }
+                    else -> {
+                        next()
                     }
                 }
             }
