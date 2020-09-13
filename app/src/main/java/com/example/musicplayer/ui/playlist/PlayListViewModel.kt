@@ -13,19 +13,19 @@ class PlayListViewModel: ViewModel(), BackgroundPlayerService.PlayerListener {
     }
 
     fun attachListener() {
-        PlayerServiceConnection.mConnection.mService?.listeners?.add(this)
+        PlayerServiceConnection.mService?.listeners?.add(this)
     }
 
     fun detachListener() {
-        PlayerServiceConnection.mConnection.mService?.listeners?.remove(this)
+        PlayerServiceConnection.mService?.listeners?.remove(this)
     }
 
     fun updatePlaylist() {
-        playlist.value = PlayerServiceConnection.mConnection.mService?.listTracks
+        playlist.value = PlayerServiceConnection.mService?.listTracks
     }
 
     fun updateTrack(track: Track) {
-        PlayerServiceConnection.mConnection.mService?.playTrack(track)
+        PlayerServiceConnection.mService?.playTrack(track)
     }
 
     override fun onPlaylistChangeListener(playlist: MutableList<Track>) {

@@ -4,11 +4,11 @@ import android.graphics.Bitmap
 import android.net.Uri
 
 data class Track(
-    var title: String,
-    var singer: String,
-    var image: Bitmap?,
-    var path: Uri,
-    var duration: Int,
-    var size: Long
+    val title: String,
+    val singer: String,
+    val image: Bitmap?,
+    val path: Uri,
+    val duration: Int,
+    val size: Long
 ) {
 }

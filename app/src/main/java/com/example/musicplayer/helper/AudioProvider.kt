@@ -12,11 +12,7 @@ import com.example.musicplayer.utility.Constants.audioExtension
 import java.io.File
 import java.net.URI
 
-class AudioProvider {
-
-    companion object {
-        val instance = AudioProvider()
-    }
+object AudioProvider {
 
     fun getPlayList(context: Context, path: URI): MutableList<Track> {
         val playlist = mutableListOf<Track>()

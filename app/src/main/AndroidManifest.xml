@@ -30,5 +30,6 @@
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
+        <receiver android:name=".service.AudioFocusReceiver"/>
     </application>
 </manifest>

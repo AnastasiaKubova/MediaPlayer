@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.musicplayer.R
@@ -20,7 +21,7 @@ import kotlinx.android.synthetic.main.seekbar_panel.*
 
 class PlayFragment: BaseFragment(), PlayerServiceConnection.PlayerServiceConnectionListener {
 
-    private lateinit var viewModel: PlayViewModel
+    private val viewModel by viewModels<PlayViewModel>()
     private val seekHandler: Handler = Handler(Looper.getMainLooper())
     private lateinit var runnable: Runnable
 
@@ -31,7 +32,6 @@ class PlayFragment: BaseFragment(), PlayerServiceConnection.PlayerServiceConnect
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(PlayViewModel::class.java)
 
         /* Init view listeners. */
         play_pause.setOnClickListener { onPlayOrPauseClick() }
@@ -66,13 +66,13 @@ class PlayFragment: BaseFragment(), PlayerServiceConnection.PlayerServiceConnect
     override fun onStart() {
         super.onStart()
         viewModel.attachListener()
-        PlayerServiceConnection.mConnection.listener  = this
+        PlayerServiceConnection.listener  = this
     }
 
     override fun onDestroy() {
         super.onDestroy()
         viewModel.detachListener()
-        PlayerServiceConnection.mConnection.listener = null
+        PlayerServiceConnection.listener = null
     }
 
     private fun updateSeekBar() {

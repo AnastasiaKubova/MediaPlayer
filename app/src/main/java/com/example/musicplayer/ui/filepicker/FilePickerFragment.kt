@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
@@ -22,7 +23,7 @@ class FilePickerFragment : BaseFragment(), FilePickerAdapter.FileListener,
     private lateinit var filepickerRecyclerView: RecyclerView
     private lateinit var filepickerAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
-    private lateinit var viewModel: FilePickerViewModel
+    private val viewModel by viewModels<FilePickerViewModel>()
     private var navController: NavController? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +33,6 @@ class FilePickerFragment : BaseFragment(), FilePickerAdapter.FileListener,
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(FilePickerViewModel::class.java)
         dialogListener = this
         navController = findNavController()
 

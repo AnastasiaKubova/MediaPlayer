@@ -17,26 +17,26 @@ class FilePickerViewModel: ViewModel() {
     val currentFileName: MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
     fun saveFolder() {
-        Preference.instance.setSourceFolder(FilePicker.instance.currentFolderPath.path)
-        PlayerServiceConnection.mConnection.mService?.setUriContent(FilePicker.instance.currentFolderPath)
+        Preference.setSourceFolder(FilePicker.currentFolderPath.path)
+        PlayerServiceConnection.mService?.setUriContent(FilePicker.currentFolderPath)
     }
 
     fun updateFileList() {
-        filesList.value = FilePicker.instance.getLastFolderList()
+        filesList.value = FilePicker.getLastFolderList()
         updateCurrentFolderName()
     }
 
     fun updateListForParentFolder() {
-        filesList.value = FilePicker.instance.getParentFiles()
+        filesList.value = FilePicker.getParentFiles()
         updateCurrentFolderName()
     }
 
     fun updateListForSelectFolder(file: FileData) {
-        filesList.value = FilePicker.instance.getFromSelectFolderList(URI.create(file.file!!.absolutePath))
+        filesList.value = FilePicker.getFromSelectFolderList(URI.create(file.file!!.absolutePath))
         updateCurrentFolderName()
     }
 
     private fun updateCurrentFolderName() {
-        currentFileName.value = FilePicker.instance.getFileName()
+        currentFileName.value = FilePicker.getFileName()
     }
 }

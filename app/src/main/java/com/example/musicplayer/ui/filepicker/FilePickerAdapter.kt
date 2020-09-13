@@ -10,9 +10,6 @@ import com.example.musicplayer.ui.filepicker.holder.DefaultItemViewHolder
 import com.example.musicplayer.ui.filepicker.holder.FilePickerViewHolder
 import com.example.musicplayer.ui.filepicker.model.FileData
 
-const val DEFAULT = 1
-const val NONE = 0
-
 class FilePickerAdapter (var filesList: MutableList<FileData>, var listener: FileListener?): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

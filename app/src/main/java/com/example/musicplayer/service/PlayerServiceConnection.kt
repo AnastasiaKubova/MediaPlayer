@@ -4,11 +4,7 @@ import android.content.ComponentName
 import android.content.ServiceConnection
 import android.os.IBinder
 
-class PlayerServiceConnection : ServiceConnection {
-
-    companion object {
-        val mConnection = PlayerServiceConnection()
-    }
+object PlayerServiceConnection : ServiceConnection {
 
     var listener: PlayerServiceConnectionListener? = null
     var mService: BackgroundPlayerService? = null

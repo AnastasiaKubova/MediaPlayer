@@ -25,46 +25,46 @@ class PlayViewModel : ViewModel(), BackgroundPlayerService.PlayerListener {
     }
 
     fun updateCurrentTrack() {
-        currentTrack.value = PlayerServiceConnection.mConnection.mService?.currentTrack
-        durationTrack.value = PlayerServiceConnection.mConnection.mService?.getDuration()
-        playTrackStatus.value = PlayerServiceConnection.mConnection.mService?.isTrackPlay()
-        trackPosition.value = PlayerServiceConnection.mConnection.mService?.getCurrentPosition()
+        currentTrack.value = PlayerServiceConnection.mService?.currentTrack
+        durationTrack.value = PlayerServiceConnection.mService?.getDuration()
+        playTrackStatus.value = PlayerServiceConnection.mService?.isTrackPlay()
+        trackPosition.value = PlayerServiceConnection.mService?.getCurrentPosition()
     }
 
     fun playTrackStatusChange() {
-        if (PlayerServiceConnection.mConnection.mService == null) {
+        if (PlayerServiceConnection.mService == null) {
             return
         }
-        if (PlayerServiceConnection.mConnection.mService!!.isTrackPlay()) {
-            PlayerServiceConnection.mConnection.mService?.pause()
+        if (PlayerServiceConnection.mService!!.isTrackPlay()) {
+            PlayerServiceConnection.mService?.pause()
         } else {
-            PlayerServiceConnection.mConnection.mService?.play()
+            PlayerServiceConnection.mService?.play()
         }
     }
 
     fun skipAndNextTrack() {
-        PlayerServiceConnection.mConnection.mService?.next()
+        PlayerServiceConnection.mService?.next()
     }
 
     fun skipAndBeforeTrack() {
-        PlayerServiceConnection.mConnection.mService?.before()
+        PlayerServiceConnection.mService?.before()
     }
 
     fun updateSeekPositionForTrack() {
-        trackPosition.value = PlayerServiceConnection.mConnection.mService?.getCurrentPosition()
+        trackPosition.value = PlayerServiceConnection.mService?.getCurrentPosition()
     }
 
     fun setSeekPosition(pos: Int) {
-        PlayerServiceConnection.mConnection.mService?.setSeekPosition(pos)
+        PlayerServiceConnection.mService?.setSeekPosition(pos)
         updateCurrentTrack()
     }
 
     fun attachListener() {
-        PlayerServiceConnection.mConnection.mService?.listeners?.add(this)
+        PlayerServiceConnection.mService?.listeners?.add(this)
     }
 
     fun detachListener() {
-        PlayerServiceConnection.mConnection.mService?.listeners?.remove(this)
+        PlayerServiceConnection.mService?.listeners?.remove(this)
     }
 
     override fun onPlaylistChangeListener(playlist: MutableList<Track>) {

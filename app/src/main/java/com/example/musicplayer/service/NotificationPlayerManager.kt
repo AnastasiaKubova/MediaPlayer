@@ -12,18 +12,19 @@ import com.example.musicplayer.R
 import com.example.musicplayer.model.Track
 import com.example.musicplayer.utility.Constants
 
-const val NOTIFY_ID = 100
-
 class NotificationPlayerManager(var baseContext: Context) {
 
     /* Constants. */
-    private val CHANNEL_ID = "player.manager.service.CHANNEL_ID"
-    private val CHANNEL_TEXT = "player.manager.service.CHANNEL_TEXT"
-    private val SESSION_TRACK = "player.manager.service.SESSION_TRACK"
-    private var playButtonRequestCode = 0
-    private var pauseButtonRequestCode = 1
-    private var nextButtonRequestCode = 2
-    private var beforeButtonRequestCode = 3
+    companion object {
+        const val NOTIFY_ID = 100
+        private const val CHANNEL_ID = "player.manager.service.CHANNEL_ID"
+        private const val CHANNEL_TEXT = "player.manager.service.CHANNEL_TEXT"
+        private const val SESSION_TRACK = "player.manager.service.SESSION_TRACK"
+        private const val playButtonRequestCode = 0
+        private const val pauseButtonRequestCode = 1
+        private const val nextButtonRequestCode = 2
+        private const val beforeButtonRequestCode = 3
+    }
 
     private var notificationBuilder: NotificationCompat.Builder
     private var notificationManager: NotificationManager? = null

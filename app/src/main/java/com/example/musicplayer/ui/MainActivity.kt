@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(),
         } else {
             startService(intent)
         }
-        bindService(intent, PlayerServiceConnection.mConnection, 0)
+        bindService(intent, PlayerServiceConnection, 0)
     }
 
     override fun onStop() {
@@ -69,9 +69,9 @@ class MainActivity : AppCompatActivity(),
         BaseFragment.listener = null
 
         /* Disconnect service. */
-        if (PlayerServiceConnection.mConnection.mBound) {
-            unbindService(PlayerServiceConnection.mConnection)
-            PlayerServiceConnection.mConnection.mBound = false
+        if (PlayerServiceConnection.mBound) {
+            unbindService(PlayerServiceConnection)
+            PlayerServiceConnection.mBound = false
         }
     }
 
@@ -81,30 +81,20 @@ class MainActivity : AppCompatActivity(),
         }
         dialogView.findViewById<TextView>(R.id.track_name_bottomsheet).text = track.title
         dialogView.findViewById<TextView>(R.id.remove_track_bottomsheet).setOnClickListener {
-            FilePicker.instance.removeAudioFile(track.path)
+            FilePicker.removeAudioFile(track.path)
             dialog.cancel()
         }
         dialogView.findViewById<TextView>(R.id.play_next_bottomsheet).setOnClickListener {
-            PlayerServiceConnection.mConnection.mService?.playTrackAsNext(track)
+            PlayerServiceConnection.mService?.playTrackAsNext(track)
             dialog.cancel()
         }
         dialog.show()
     }
 
-    private fun showFirstFragment() {
-
-        /* Set fragment by the default. */
-        if (TextUtils.isEmpty(Preference.instance.getSourceFolder())) {
-            openFilePickerFragment()
-        } else {
-            openPlayFragment()
-        }
-    }
-
     private fun onRepeatClick() {
-        val isLooper = PlayerServiceConnection.mConnection.mService?.isTrackLooping()
+        val isLooper = PlayerServiceConnection.mService?.isTrackLooping()
         if (isLooper != null) {
-            PlayerServiceConnection.mConnection.mService?.setLooping(!isLooper)
+            PlayerServiceConnection.mService?.setLooping(!isLooper)
             if (!isLooper) {
                 repeat_track.background = getDrawable(R.drawable.bg_selected_small)
             } else {
@@ -114,7 +104,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun onRefreshClick() {
-        PlayerServiceConnection.mConnection.mService?.mixPlaylist()
+        PlayerServiceConnection.mService?.mixPlaylist()
     }
 
     private fun openPlayFragment() {

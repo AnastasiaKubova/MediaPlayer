@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
@@ -20,8 +21,9 @@ class PlayListFragment: BaseFragment(), PlayListViewHolder.TrackListener {
     private lateinit var playlistRecyclerView: RecyclerView
     private lateinit var playListAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
+
     private var navController: NavController? = null
-    private lateinit var viewModel: PlayListViewModel
+    private val viewModel by viewModels<PlayListViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -30,7 +32,6 @@ class PlayListFragment: BaseFragment(), PlayListViewHolder.TrackListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(PlayListViewModel::class.java)
 
         /* Init navigate. */
         navController = findNavController()

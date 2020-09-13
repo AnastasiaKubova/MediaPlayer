@@ -9,23 +9,19 @@ import com.example.musicplayer.utility.Constants.audioExtension
 import java.io.File
 import java.net.URI
 
-class FilePicker private constructor(){
+
+object FilePicker {
+
+    val rootFolder = "system"
 
     var currentFolderPath: URI = Environment.getRootDirectory().toURI()
         private set
 
-    private val defaultFolder: File = File("DEFAULT_FOLDER")
-
     init {
-        val url = Preference.instance.getSourceFolder()
+        val url = Preference.getSourceFolder()
         if (!TextUtils.isEmpty(url)) {
             currentFolderPath = URI.create(url)
         }
-    }
-
-    companion object {
-        val instance = FilePicker()
-        val rootFolder = "system"
     }
 
     fun getFileName(): String {

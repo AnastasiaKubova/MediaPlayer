@@ -15,10 +15,11 @@ import androidx.annotation.RequiresApi
 import com.example.musicplayer.helper.AudioProvider
 import com.example.musicplayer.helper.Preference
 import com.example.musicplayer.model.Track
+import com.example.musicplayer.service.NotificationPlayerManager.Companion.NOTIFY_ID
 import com.example.musicplayer.utility.Constants
 import java.net.URI
 
-class BackgroundPlayerService: Service(), MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
+class BackgroundPlayerService: Service(), AudioManager.OnAudioFocusChangeListener {
 
     /* Player variables. */
     private var mediaPlayer: MediaPlayer? = null
@@ -53,7 +54,7 @@ class BackgroundPlayerService: Service(), MediaPlayer.OnCompletionListener, Audi
         }
 
         /* Init playlist. */
-        val url = Preference.instance.getSourceFolder()
+        val url = Preference.getSourceFolder()
         if (!TextUtils.isEmpty(url)) {
             setUriContent(URI.create(url))
         }
@@ -72,6 +73,11 @@ class BackgroundPlayerService: Service(), MediaPlayer.OnCompletionListener, Audi
             }
             Constants.NOTIFICATION_PAUSE_INTENT -> {
                 pause()
+            }
+            Constants.AUDIO_FOCUS_CHANGED -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    onAudioFocusChange(initFocus())
+                }
             }
         }
         return START_STICKY
@@ -102,17 +108,22 @@ class BackgroundPlayerService: Service(), MediaPlayer.OnCompletionListener, Audi
             mediaPlayerCreate()
         }
 
+        /* Check that audio player has focus for play. */
         var canPlay = true
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            canPlay = initFocus()
+            canPlay = initFocus() == AudioManager.AUDIOFOCUS_GAIN
         }
-        if (canPlay) {
-            mediaPlayer?.start()
+        if (!canPlay) {
+            return
         }
-        mediaPlayer?.setOnCompletionListener(this)
+
+        /* Start player. */
+        mediaPlayer?.start()
 
         /* Start notification and update data. */
-        startForeground(NOTIFY_ID, notificationManager!!.buildNotification())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForeground(NOTIFY_ID, notificationManager!!.buildNotification())
+        }
         notificationManager?.updatePlayNotification(currentTrack!!)
         listeners.forEach {
             it.onTrackPlay(currentTrack!!)
@@ -127,10 +138,11 @@ class BackgroundPlayerService: Service(), MediaPlayer.OnCompletionListener, Audi
             mediaPlayerCreate()
         }
         mediaPlayer?.pause()
-        mediaPlayer?.setOnCompletionListener(null)
 
         /* Stop notification and update data. */
-        stopForeground(false)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            stopForeground(false)
+        }
         notificationManager?.updatePauseNotification(currentTrack!!)
         listeners.forEach {
             it.onTrackPause(currentTrack!!)
@@ -287,6 +299,27 @@ class BackgroundPlayerService: Service(), MediaPlayer.OnCompletionListener, Audi
                     .build()
             )
             mediaPlayer?.prepare()
+            mediaPlayer?.setOnCompletionListener{
+
+                /* Notify listeners.*/
+                listeners.forEach{
+                    it.onPlayCompletion()
+
+                    /* Do action. */
+                    when {
+                        playNextTrack != null -> {
+                            playTrack(playNextTrack!!)
+                            playNextTrack = null
+                        }
+                        isTrackLooping() -> {
+                            play()
+                        }
+                        else -> {
+                            next()
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -297,7 +330,7 @@ class BackgroundPlayerService: Service(), MediaPlayer.OnCompletionListener, Audi
             resetData()
 
             /* Init playlist. */
-            listTracks = AudioProvider.instance.getPlayList(baseContext!!, sourceFolder!!)
+            listTracks = AudioProvider.getPlayList(baseContext!!, sourceFolder!!)
             if (listTracks.size > 0) {
 
                 /* Update current data. */
@@ -312,31 +345,8 @@ class BackgroundPlayerService: Service(), MediaPlayer.OnCompletionListener, Audi
         }
     }
 
-
-    override fun onCompletion(p0: MediaPlayer?) {
-
-        /* Notify listeners.*/
-        listeners.forEach{
-            it.onPlayCompletion()
-
-            /* Do action. */
-            when {
-                playNextTrack != null -> {
-                    playTrack(playNextTrack!!)
-                    playNextTrack = null
-                }
-                isTrackLooping() -> {
-                    play()
-                }
-                else -> {
-                    next()
-                }
-            }
-        }
-    }
-
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun initFocus() : Boolean {
+    private fun initFocus() : Int {
         val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
             setAudioAttributes(AudioAttributes.Builder().run {
@@ -348,8 +358,7 @@ class BackgroundPlayerService: Service(), MediaPlayer.OnCompletionListener, Audi
             setOnAudioFocusChangeListener(this@BackgroundPlayerService)
             build()
         }
-        val res = audioManager.requestAudioFocus(focusRequest)
-        return res == AudioManager.AUDIOFOCUS_GAIN
+        return audioManager.requestAudioFocus(focusRequest)
     }
 
     override fun onAudioFocusChange(focusChange: Int) {

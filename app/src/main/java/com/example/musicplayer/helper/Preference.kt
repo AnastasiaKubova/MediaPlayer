@@ -5,18 +5,13 @@ import android.content.SharedPreferences
 import com.example.musicplayer.App
 
 
-class Preference private constructor() {
+object Preference {
 
     private val APP_PREFERENCES = "music_player_settings"
     private val SOURCE_PATH = "source_path"
 
     private var mSettings: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
-
-    companion object {
-        var instance = Preference()
-    }
-
     init {
         mSettings = App.context?.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
         editor = mSettings!!.edit()
