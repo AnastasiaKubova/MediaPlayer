@@ -1,5 +1,7 @@
 # This is a sample project to creating "Media Player".
 
+<img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/bg.gif?raw=true" width="250" /> <img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/filepicker.gif?raw=true" width="250"/> <img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/playlist.gif?raw=true" width="250"> <img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/viewpager.gif?raw=true" width="250">
+
 ## This project shows how to
 - Use MediaPlayer for playing audio files;
 - Play audio files in the background;
@@ -16,8 +18,6 @@
 - Scroll track via seek bar;
 - Select a track for playing;
 - Set track for next playing.
-
-<img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/bg.gif?raw=true" width="250" /> <img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/filepicker.gif?raw=true" width="250"/> <img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/playlist.gif?raw=true" width="250"> <img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/viewpager.gif?raw=true" width="250">
 
 ## Design patterns
 - MVVM pattern;
