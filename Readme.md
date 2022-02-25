@@ -1,4 +1,4 @@
-# This is a sample project to creating "Media Player".
+# [DEPRECATED] This is a sample project to creating "Media Player".
 
 <img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/bg.gif?raw=true" width="250" /> <img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/filepicker.gif?raw=true" width="250"/> <img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/playlist.gif?raw=true" width="250"> <img src="https://github.com/AnastasiaKubova/MediaPlayer/blob/master/preview/viewpager.gif?raw=true" width="250">
 
